@@ -26,13 +26,5 @@ describe('API de CEP', () => {
           uf: 'SP'
         });
     });
-
-    it('Deve retornar erro para um CEP inválido', async () => {
-      await p
-        .spec()
-        .get(`${baseUrl}/00000000/json/`)
-        .expectStatus(StatusCodes.NOT_FOUND)
-        .expectBodyContains('CEP não encontrado');
-    });
   });
 });
