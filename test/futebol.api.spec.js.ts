@@ -2,8 +2,8 @@ import pactum from 'pactum';
 import { StatusCodes } from 'http-status-codes';
 
 describe('API de Futebol', () => {
-  const baseUrlFutebol = 'https://api.football-api.com/2.0'; // Exemplo de base da Football-API
-  const apiKeyFutebol = 'YOUR_API_KEY'; // Substitua com sua chave de API da Football-API
+  const baseUrlFutebol = 'https://api.football-api.com/2.0'; 
+  const apiKeyFutebol = 'YOUR_API_KEY'; 
 
   pactum.request.setDefaultTimeout(30000);
 
@@ -92,6 +92,38 @@ describe('API de Futebol', () => {
         .get(`${baseUrlFutebol}/competitions/1/matches?Authorization=INVALID_API_KEY`)
         .expectStatus(StatusCodes.FORBIDDEN)
         .expectBodyContains('Forbidden');
+    });
+  });
+
+
+  describe('Excluir Competição ou Time (DELETE)', () => {
+    it('Deve excluir uma competição com sucesso', async () => {
+      const competitionId = 1; 
+      
+      await pactum
+        .spec()
+        .delete(`${baseUrlFutebol}/competitions/${competitionId}?Authorization=${apiKeyFutebol}`)
+        .expectStatus(StatusCodes.NO_CONTENT); 
+    });
+
+    it('Deve retornar erro ao tentar excluir uma competição com chave de API inválida', async () => {
+      const competitionId = 1; 
+
+      await pactum
+        .spec()
+        .delete(`${baseUrlFutebol}/competitions/${competitionId}?Authorization=INVALID_API_KEY`)
+        .expectStatus(StatusCodes.FORBIDDEN)
+        .expectBodyContains('Forbidden');
+    });
+
+    it('Deve retornar erro ao tentar excluir uma competição inexistente', async () => {
+      const invalidCompetitionId = 9999; 
+
+      await pactum
+        .spec()
+        .delete(`${baseUrlFutebol}/competitions/${invalidCompetitionId}?Authorization=${apiKeyFutebol}`)
+        .expectStatus(StatusCodes.NOT_FOUND)
+        .expectBodyContains('Not Found');
     });
   });
 });

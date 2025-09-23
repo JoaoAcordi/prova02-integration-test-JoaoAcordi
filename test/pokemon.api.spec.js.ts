@@ -38,7 +38,7 @@ describe('API de Pokémon', () => {
     it('Deve retornar as informações corretas de um Pokémon pelo ID', async () => {
       await pactum
         .spec()
-        .get(`${baseUrlPokemon}/25`) // ID do Pikachu
+        .get(`${baseUrlPokemon}/25`) 
         .expectStatus(StatusCodes.OK)
         .expectJsonLike({
           id: 25,
@@ -56,7 +56,46 @@ describe('API de Pokémon', () => {
     it('Deve retornar erro para um ID de Pokémon inválido', async () => {
       await pactum
         .spec()
-        .get(`${baseUrlPokemon}/99999`) // ID inválido
+        .get(`${baseUrlPokemon}/99999`) 
+        .expectStatus(StatusCodes.NOT_FOUND)
+        .expectBodyContains('Not Found');
+    });
+  });
+
+  // Teste para o PATCH
+  describe('Atualizar Pokémon (PATCH)', () => {
+    it('Deve atualizar o nome de um Pokémon com sucesso', async () => {
+      const updatedData = {
+        name: 'pikachu-updated'  
+      };
+
+      await pactum
+        .spec()
+        .patch(`${baseUrlPokemon}/25`)  
+        .withJson(updatedData)  
+        .expectStatus(StatusCodes.OK)
+        .expectJsonLike({
+          name: 'pikachu-updated',
+          id: 25,
+          types: [
+            {
+              type: {
+                name: 'electric'
+              }
+            }
+          ]
+        });
+    });
+
+    it('Deve retornar erro ao tentar atualizar um Pokémon inexistente', async () => {
+      const updatedData = {
+        name: 'nonexistentpokemon-updated'
+      };
+
+      await pactum
+        .spec()
+        .patch(`${baseUrlPokemon}/99999`)  
+        .withJson(updatedData)
         .expectStatus(StatusCodes.NOT_FOUND)
         .expectBodyContains('Not Found');
     });
