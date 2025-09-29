@@ -71,7 +71,7 @@ describe('API de CEP - ViaCEP', () => {
     it('Não deve aceitar PATCH em um CEP inexistente', async () => {
       await p.spec()
         .patch(`${baseUrl}/00000000/json`)
-        .expectStatus(StatusCodes.BAD_REQUEST);
+        .expectStatus(StatusCodes.METHOD_NOT_ALLOWED);
     });
 
     it('Não deve aceitar PUT em endpoint mal formado', async () => {
