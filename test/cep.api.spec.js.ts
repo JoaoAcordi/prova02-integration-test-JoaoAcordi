@@ -53,37 +53,37 @@ describe('API de CEP - ViaCEP', () => {
     it('Não deve aceitar PUT em um endpoint de CEP válido', async () => {
       await p.spec()
         .put(`${baseUrl}/01001000/json`)
-        .expectStatus(StatusCodes.METHOD_NOT_ALLOWED);
+        .expectStatus(StatusCodes.BAD_REQUEST);
     });
 
     it('Não deve aceitar PATCH em um endpoint de CEP válido', async () => {
       await p.spec()
         .patch(`${baseUrl}/01001000/json`)
-        .expectStatus(StatusCodes.METHOD_NOT_ALLOWED);
+        .expectStatus(StatusCodes.BAD_REQUEST);
     });
 
     it('Não deve aceitar PUT em um CEP inexistente', async () => {
       await p.spec()
         .put(`${baseUrl}/00000000/json`)
-        .expectStatus(StatusCodes.METHOD_NOT_ALLOWED);
+        .expectStatus(StatusCodes.BAD_REQUEST);
     });
 
     it('Não deve aceitar PATCH em um CEP inexistente', async () => {
       await p.spec()
         .patch(`${baseUrl}/00000000/json`)
-        .expectStatus(StatusCodes.METHOD_NOT_ALLOWED);
+        .expectStatus(StatusCodes.BAD_REQUEST);
     });
 
     it('Não deve aceitar PUT em endpoint mal formado', async () => {
       await p.spec()
         .put(`${baseUrl}/json/01001000`)
-        .expectStatus(StatusCodes.METHOD_NOT_ALLOWED);
+        .expectStatus(StatusCodes.BAD_REQUEST);
     });
 
     it('Não deve aceitar PATCH em endpoint mal formado', async () => {
       await p.spec()
         .patch(`${baseUrl}/json/01001000`)
-        .expectStatus(StatusCodes.METHOD_NOT_ALLOWED);
+        .expectStatus(StatusCodes.BAD_REQUEST);
     });
 
   });
