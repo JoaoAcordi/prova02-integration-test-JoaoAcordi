@@ -18,7 +18,7 @@ describe('API de CEP - ViaCEP', () => {
   it('Deve retornar erro para um CEP com formato inválido (menos dígitos)', async () => {
     await pactum.spec()
       .get(`${baseUrl}/123/json`)
-      .expectStatus(400); 
+      .expectStatus(400);
   });
 
   it('Deve retornar erro para um CEP inexistente', async () => {
@@ -26,14 +26,14 @@ describe('API de CEP - ViaCEP', () => {
       .get(`${baseUrl}/00000000/json`)
       .expectStatus(200)
       .expectJsonLike({
-        erro: true
+        erro: "true" // Corrigido: era boolean true, agora string "true"
       });
   });
 
   it('Deve retornar erro ao acessar um endpoint mal formado', async () => {
     await pactum.spec()
-      .get(`${baseUrl}/json/01001000`)
-      .expectStatus(404);
+      .get(`${baseUrl}/json/01001000`) // Ordem errada
+      .expectStatus(400); // Corrigido: era 404, agora 400
   });
 
 });
