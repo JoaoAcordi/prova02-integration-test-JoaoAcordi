@@ -1,61 +1,39 @@
-import pactum from 'pactum';
-import { StatusCodes } from 'http-status-codes';
-import { SimpleReporter } from '../simple-reporter';
+const pactum = require('pactum');
 
-describe('API de CEP - POST', () => {
-  const p = pactum;
-  const rep = SimpleReporter;
+describe('API de CEP - ViaCEP', () => {
+
   const baseUrl = 'https://viacep.com.br/ws';
 
-  p.request.setDefaultTimeout(30000);
-
-  beforeAll(() => p.reporter.add(rep));
-  afterAll(() => p.reporter.end());
-
-  describe('Buscar CEP via POST', () => {
-    it('Deve retornar o endereço correto para um CEP válido enviado via POST', async () => {
-      const requestBody = {
-        cep: '01001000'
-      };
-
-      await p
-        .spec()
-        .post(`${baseUrl}/json/`)
-        .withJson(requestBody)
-        .expectStatus(StatusCodes.OK)
-        .expectJsonLike({
-          cep: '01001-000',
-          logradouro: 'Praça da Sé',
-          bairro: 'Sé',
-          localidade: 'São Paulo',
-          uf: 'SP'
-        });
-    });
-
-    it('Deve retornar erro para um CEP inválido enviado via POST', async () => {
-      const requestBody = {
-        cep: '00000000'
-      };
-
-      await p
-        .spec()
-        .post(`${baseUrl}/json/`)
-        .withJson(requestBody)
-        .expectStatus(StatusCodes.NOT_FOUND)
-        .expectBodyContains('CEP não encontrado');
-    });
-
-    it('Deve retornar erro se o formato do CEP enviado for inválido no POST', async () => {
-      const requestBody = {
-        cep: 'abcd1234'
-      };
-
-      await p
-        .spec()
-        .post(`${baseUrl}/json/`)
-        .withJson(requestBody)
-        .expectStatus(StatusCodes.BAD_REQUEST)
-        .expectBodyContains('Formato de CEP inválido');
-    });
+  it('Deve retornar informações corretas para um CEP válido', async () => {
+    await pactum.spec()
+      .get(`${baseUrl}/01001000/json`)
+      .expectStatus(200)
+      .expectJsonLike({
+        cep: "01001-000",
+        localidade: "São Paulo",
+        uf: "SP"
+      });
   });
+
+  it('Deve retornar erro para um CEP com formato inválido (menos dígitos)', async () => {
+    await pactum.spec()
+      .get(`${baseUrl}/123/json`)
+      .expectStatus(400); 
+  });
+
+  it('Deve retornar erro para um CEP inexistente', async () => {
+    await pactum.spec()
+      .get(`${baseUrl}/00000000/json`)
+      .expectStatus(200)
+      .expectJsonLike({
+        erro: true
+      });
+  });
+
+  it('Deve retornar erro ao acessar um endpoint mal formado', async () => {
+    await pactum.spec()
+      .get(`${baseUrl}/json/01001000`)
+      .expectStatus(404);
+  });
+
 });
